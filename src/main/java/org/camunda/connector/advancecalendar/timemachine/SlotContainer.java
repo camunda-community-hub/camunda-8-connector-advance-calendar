@@ -1,9 +1,9 @@
-package org.camunda.connector.calendaradvance.timemachine;
+package org.camunda.connector.advancecalendar.timemachine;
 
 
 import io.camunda.connector.api.error.ConnectorException;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.toolbox.CalendarAdvanceError;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.toolbox.CalendarAdvanceError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +134,7 @@ public class SlotContainer {
                                        boolean advance,
                                        boolean useHoliday,
                                        List<String> countriesCode,
-                                       CalendarAdvanceInput.CalendarPolicy holidayCalendarPolicy) {
+                                       AdvanceCalendarInput.CalendarPolicy holidayCalendarPolicy) {
 
         LocalDateTime cursor = referenceDate;
         // Special case: if the time is MIDNIGHT_MINUS and advance, we transform to next day +1

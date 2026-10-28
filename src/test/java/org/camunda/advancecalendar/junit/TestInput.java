@@ -2,11 +2,11 @@ package org.camunda.advancecalendar.junit;
 
 import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.advancehour.HourFunction;
-import org.camunda.connector.calendaradvance.timemachine.SlotContainer;
-import org.camunda.connector.calendaradvance.toolbox.CalendarAdvanceError;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.advancehour.HourFunction;
+import org.camunda.connector.advancecalendar.timemachine.SlotContainer;
+import org.camunda.connector.advancecalendar.toolbox.CalendarAdvanceError;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,15 @@ public class TestInput {
 
     @Test
     public void testNoCountryCode() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-05-13T15:18:00";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT20H";
         calendarInput.useHolidays = true;
         calendarInput.businessCalendar = List.of("Monday=09:00:00-18:00:00",
@@ -41,7 +41,7 @@ public class TestInput {
                 SlotContainer.SPECIFIC_DAY_PREFIX + "2026/05/14:09:00-12:00", // Ascension day : it's a holiday in France, but we are open
                 SlotContainer.SPECIFIC_DAY_PREFIX + "2026/05/15:09:00-12:00"); // Day after Ascension
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
             calendarFunction.execute(context);
 
@@ -62,15 +62,15 @@ public class TestInput {
     }
     @Test
     public void testNoStartDate() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = null;
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT20H";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = List.of("Monday=09:00:00-18:00:00",
@@ -81,7 +81,7 @@ public class TestInput {
                 SlotContainer.SPECIFIC_DAY_PREFIX + "2026/05/14:09:00-12:00", // Ascension day : it's a holiday in France, but we are open
                 SlotContainer.SPECIFIC_DAY_PREFIX + "2026/05/15:09:00-12:00"); // Day after Ascension
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
             calendarFunction.execute(context);
 

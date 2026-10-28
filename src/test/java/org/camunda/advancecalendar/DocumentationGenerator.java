@@ -1,8 +1,8 @@
 package org.camunda.advancecalendar;
 
 import io.camunda.cherry.definition.connector.SdkRunnerCherryConnector;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.toolbox.SubFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.toolbox.SubFunction;
 import io.camunda.connector.cherrytemplate.RunnerParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class DocumentationGenerator {
 
     public static void main(String[] args) {
         DocumentationGenerator documentationGenerator = new DocumentationGenerator();
-        documentationGenerator.generate("./doc/", "Functions.md", new CalendarAdvanceFunction());
+        documentationGenerator.generate("./doc/", "Functions.md", new AdvanceCalendarFunction());
 
     }
 
@@ -34,13 +34,13 @@ public class DocumentationGenerator {
      * Generate the documentation
      * @param folder folder to write the documentation
      * @param fileName name of the documentation
-     * @param calendarAdvanceFunction CmisObject
+     * @param advanceCalendarFunction CmisObject
      */
-    public void generate(String folder, String fileName, CalendarAdvanceFunction calendarAdvanceFunction) {
+    public void generate(String folder, String fileName, AdvanceCalendarFunction advanceCalendarFunction) {
         try (BufferedWriter writer = Files.newBufferedWriter(Path.of(folder + fileName))) {
             logger.info("Generating {}/{}", folder, fileName);
 
-            SdkRunnerCherryConnector cherryConnector = new SdkRunnerCherryConnector(calendarAdvanceFunction);
+            SdkRunnerCherryConnector cherryConnector = new SdkRunnerCherryConnector(advanceCalendarFunction);
             writeLine(writer, "# " + cherryConnector.getDisplayLabel());
             if (cherryConnector.getLogo() != null) {
                 writeLine(writer, "[Description](data:image/png;base64," + cherryConnector.getLogo() + ")");
@@ -48,7 +48,7 @@ public class DocumentationGenerator {
             writeLine(writer, "");
             writeLine(writer, cherryConnector.getDescription());
             // for each function
-            for (SubFunction function : calendarAdvanceFunction.getListSubFunctions()) {
+            for (SubFunction function : advanceCalendarFunction.getListSubFunctions()) {
                 writeTitle(writer, "##", addSpace(function.getSubFunctionName()));
 
                 writeLine(writer, function.getSubFunctionDescription());

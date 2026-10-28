@@ -1,6 +1,6 @@
 package org.camunda.advancecalendar.junit;
 
-import org.camunda.connector.calendaradvance.timemachine.HolidayContainer;
+import org.camunda.connector.advancecalendar.timemachine.HolidayContainer;
 
 import java.time.LocalDate;
 import java.util.List;

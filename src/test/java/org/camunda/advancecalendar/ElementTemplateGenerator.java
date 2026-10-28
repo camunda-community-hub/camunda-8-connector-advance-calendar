@@ -1,7 +1,7 @@
 package org.camunda.advancecalendar;
 
 import io.camunda.cherry.definition.RunnerDecorationTemplate;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ public class ElementTemplateGenerator {
     public static void generate() {
         // Call the Cherry runtime
         try {
-            RunnerDecorationTemplate runnerDecorationTemplate = new RunnerDecorationTemplate(new CalendarAdvanceFunction());
+            RunnerDecorationTemplate runnerDecorationTemplate = new RunnerDecorationTemplate(new AdvanceCalendarFunction());
             runnerDecorationTemplate.generateElementTemplate("./element-templates/", "calendaradvance-function.json");
         } catch (Exception e) {
             logger.error("Error during generation", e);

@@ -1,8 +1,8 @@
-package org.camunda.connector.calendaradvance.toolbox;
+package org.camunda.connector.advancecalendar.toolbox;
 
 import io.camunda.connector.cherrytemplate.RunnerParameter;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ public class ParameterToolbox {
         logger.info("getParameters input? {}", inputParameters);
 
         // add the "choose the function" parameters
-        RunnerParameter chooseFunction = new RunnerParameter(CalendarAdvanceInput.CALENDARADVANCEFUNCTION,
+        RunnerParameter chooseFunction = new RunnerParameter(AdvanceCalendarInput.CALENDARADVANCEFUNCTION,
                 "CalendarAdvance Function", String.class, RunnerParameter.Level.REQUIRED, "Choose the function to execute");
         chooseFunction.setAttribute("priority", -1);
 
@@ -52,7 +52,7 @@ public class ParameterToolbox {
         Map<String, List<String>> mapParameterSubType = new HashMap<>();
 
         //  now, we collect all functions, and for each function, we collect parameters
-        for (Class<?> classFunction : CalendarAdvanceFunction.allFunctions) {
+        for (Class<?> classFunction : AdvanceCalendarFunction.allFunctions) {
             try {
                 Constructor<?> constructor = classFunction.getConstructor();
                 SubFunction inputSubFunction = (SubFunction) constructor.newInstance();
@@ -115,7 +115,7 @@ public class ParameterToolbox {
             List<String> listFunctionForThisParameter = mapParameterSubType.get(parameter.getName());
 
             if (listFunctionForThisParameter == null || listFunctionForThisParameter.isEmpty()
-                    || listFunctionForThisParameter.size() == CalendarAdvanceFunction.allFunctions.size()) {
+                    || listFunctionForThisParameter.size() == AdvanceCalendarFunction.allFunctions.size()) {
                 logger.info("parameter [{}] Register in NO or ALL functions", parameter.getName());
             } else {
                 logger.info("parameter [{}] Register in some functions [{}]", parameter.getName(),
@@ -126,7 +126,7 @@ public class ParameterToolbox {
         // first, the function selection
         logger.info(" FileStorageParameter => Map Size={}", runnerParametersCollectList.size());
 
-        return runnerParametersCollectList.stream().map(t -> t.toMap(CalendarAdvanceInput.CALENDARADVANCEFUNCTION)).toList();
+        return runnerParametersCollectList.stream().map(t -> t.toMap(AdvanceCalendarInput.CALENDARADVANCEFUNCTION)).toList();
 
     }
 

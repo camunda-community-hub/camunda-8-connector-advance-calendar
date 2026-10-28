@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: c8-calendaradvance
+  name: c8-advancecalendar
   labels:
-    app: c8-calendaradvance
+    app: c8-advancecalendar
 spec:
   selector:
     matchLabels:
-      app: c8-calendaradvance
+      app: c8-advancecalendar
   replicas: 1
   template:
     metadata:
       labels:
-        app: c8-calendaradvance
+        app: c8-advancecalendar
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8088"
         prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
-        - name: c8-calendaradvance
-          image: ghcr.io/camunda-community-hub/c8-calendaradvance:latest
+        - name: c8-advancecalendar
+          image: ghcr.io/camunda-community-hub/c8-advancecalendar:latest
           imagePullPolicy: Always
           env:
-            - name: CONNECTOR_PDF_FUNCTION
-              value: io.camunda.connector.calendaradvance.CalendarAdvanceFunction
+            - name: CONNECTOR_FUNCTION
+              value: io.camunda.connector.calendaradvance.AdvanceCalendarFunction
             - name: CONNECTOR_CALENDARADVANCE_TYPE
               value: c-calendaradvance-function
             - name: CAMUNDA_CLIENT_MODE

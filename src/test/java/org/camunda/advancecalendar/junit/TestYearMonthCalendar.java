@@ -1,10 +1,10 @@
 package org.camunda.advancecalendar.junit;
 
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.CalendarAdvanceOutput;
-import org.camunda.connector.calendaradvance.advanceday.DayFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarOutput;
+import org.camunda.connector.advancecalendar.advanceday.DayFunction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,26 +30,26 @@ public class TestYearMonthCalendar {
 
     @Test
     public void forwardMonthCalendarDay() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = DayFunction.ADVANCE_DAYS;
         calendarInput.startDate = "2026-06-14";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
-        calendarInput.dayProgression = CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY;
-        calendarInput.targetProgression = CalendarAdvanceInput.TARGET_PROGRESSION_AFTER;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
+        calendarInput.dayProgression = AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY;
+        calendarInput.targetProgression = AdvanceCalendarInput.TARGET_PROGRESSION_AFTER;
         calendarInput.duration = "P1M";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
                 logger.info("forwardMonthCalendarDay Result FoundDate:{} resultDate[{}] resultZonedDate[{}] periods[{}]",
                         result.foundDate,
                         result.resultDate.toLocalDate(),
@@ -69,26 +69,26 @@ public class TestYearMonthCalendar {
 
     @Test
     public void backwardYearCalendarDay() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = DayFunction.ADVANCE_DAYS;
         calendarInput.startDate = "2026-12-25";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_BACKWARD;
-        calendarInput.dayProgression = CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY;
-        calendarInput.targetProgression = CalendarAdvanceInput.TARGET_PROGRESSION_BEFORE;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_BACKWARD;
+        calendarInput.dayProgression = AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY;
+        calendarInput.targetProgression = AdvanceCalendarInput.TARGET_PROGRESSION_BEFORE;
         calendarInput.duration = "P2Y";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
                 logger.info("backwardYearCalendarDay Result FoundDate:{} resultDate[{}] resultZonedDate[{}] periods[{}]",
                         result.foundDate,
                         result.resultDate.toLocalDate(),
@@ -107,26 +107,26 @@ public class TestYearMonthCalendar {
 
     @Test
     public void forwardMonthAndDaysCalendarDay() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = DayFunction.ADVANCE_DAYS;
         calendarInput.startDate = "2026-06-14";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
-        calendarInput.dayProgression = CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY;
-        calendarInput.targetProgression = CalendarAdvanceInput.TARGET_PROGRESSION_BEFORE;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
+        calendarInput.dayProgression = AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY;
+        calendarInput.targetProgression = AdvanceCalendarInput.TARGET_PROGRESSION_BEFORE;
         calendarInput.duration = "P1M12DT10H30M"; // 14 june=>14 july + 12 J=> Sunday 26 july => Friday 24
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("forwardMonthAndDaysCalendarDay Result FoundDate:{} resultDate[{}] resultZonedDate[{}] periods[{}]",
                         result.foundDate,
@@ -146,25 +146,25 @@ public class TestYearMonthCalendar {
 
     @Test
     public void forwardBissextileAndDaysCalendarDay() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = DayFunction.ADVANCE_DAYS;
         calendarInput.startDate = "2024-02-29";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
-        calendarInput.dayProgression = CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY;
-        calendarInput.targetProgression = CalendarAdvanceInput.TARGET_PROGRESSION_RESULT;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
+        calendarInput.dayProgression = AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY;
+        calendarInput.targetProgression = AdvanceCalendarInput.TARGET_PROGRESSION_RESULT;
         calendarInput.duration = "P1Y3D"; // 29 fev 2024=> 28 fev 2025+3d = 4 march
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
                 logger.info("forwardMonthAndDaysCalendarDay Result FoundDate:{} resultDate[{}] resultZonedDate[{}] periods[{}]",
                         result.foundDate,
                         result.resultDate.toLocalDate(),

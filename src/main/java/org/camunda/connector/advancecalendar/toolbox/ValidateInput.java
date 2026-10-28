@@ -1,8 +1,8 @@
-package org.camunda.connector.calendaradvance.toolbox;
+package org.camunda.connector.advancecalendar.toolbox;
 
 import io.camunda.connector.api.error.ConnectorException;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.advanceday.DayFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.advanceday.DayFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +10,7 @@ public class ValidateInput {
 
     private static final Logger logger = LoggerFactory.getLogger(ValidateInput.class.getName());
 
-    public static void validateInput(CalendarAdvanceInput input, boolean localDateTimeExpected) throws ConnectorException {
+    public static void validateInput(AdvanceCalendarInput input, boolean localDateTimeExpected) throws ConnectorException {
         if (localDateTimeExpected) {
             if (input.getCalculatedStartDateLocalDateTime() == null) {
                 logger.error("ValidateInput: Input[{}}], expected strict ISO-8601 UTC format like 2026-01-16T15:34:00, with or without a timezone", input.startDate);

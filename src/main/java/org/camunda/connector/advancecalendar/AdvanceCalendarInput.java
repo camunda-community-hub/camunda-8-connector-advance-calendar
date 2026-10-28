@@ -1,11 +1,11 @@
-package org.camunda.connector.calendaradvance;
+package org.camunda.connector.advancecalendar;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.cherrytemplate.CherryInput;
 import io.camunda.connector.cherrytemplate.RunnerParameter;
-import org.camunda.connector.calendaradvance.toolbox.CalendarAdvanceError;
-import org.camunda.connector.calendaradvance.toolbox.ParameterToolbox;
+import org.camunda.connector.advancecalendar.toolbox.CalendarAdvanceError;
+import org.camunda.connector.advancecalendar.toolbox.ParameterToolbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import java.util.*;
  * This avoids the MAPPING Exception
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CalendarAdvanceInput implements CherryInput {
+public class AdvanceCalendarInput implements CherryInput {
 
     /**
      * Attention, each Input here must be added in the PdfFunction, list of InputVariables
@@ -49,13 +49,13 @@ public class CalendarAdvanceInput implements CherryInput {
     public static final String HOLIDAY_CALENDAR_POLICY_V_ALL = "ALL";
     public static final String HOLIDAY_CALENDAR_POLICY_V_ONEOF = "ONEOF";
     public static final RunnerParameter parameterStartDay = new RunnerParameter(
-            CalendarAdvanceInput.START_DATE, // name
+            AdvanceCalendarInput.START_DATE, // name
             "Start Date", // label
             Date.class, // class
             RunnerParameter.Level.REQUIRED, // level
             "Start from this day");
     public static final RunnerParameter parameterDuration = new RunnerParameter(
-            CalendarAdvanceInput.DURATION,
+            AdvanceCalendarInput.DURATION,
             // name
             "Duration", // label
             String.class, // class
@@ -64,7 +64,7 @@ public class CalendarAdvanceInput implements CherryInput {
             .setVisibleInTemplate();
 
     public static final RunnerParameter parameterDurations = new RunnerParameter(
-            CalendarAdvanceInput.DURATIONS,
+            AdvanceCalendarInput.DURATIONS,
             // name
             "DurationS", // label
             Object.class, // class
@@ -72,7 +72,7 @@ public class CalendarAdvanceInput implements CherryInput {
             "ISO 8601 List [\"P2DT5H23M54S\", \"PT23H\"] or Map {\"INNER\": \"P2DT5H23M54S\", \"DUEDATE\": \"PT24\"}  of Durations")
             .setVisibleInTemplate();
     public static final RunnerParameter parameterDirection = new RunnerParameter(
-            CalendarAdvanceInput.DIRECTION,
+            AdvanceCalendarInput.DIRECTION,
             // name
             "Direction", // label
             String.class, // class
@@ -81,66 +81,66 @@ public class CalendarAdvanceInput implements CherryInput {
             .addChoice(DIRECTION_V_FORWARD, "forward")
             .addChoice(DIRECTION_V_BACKWARD, "backward");
     public static final RunnerParameter parameterBusinessCalendar = new RunnerParameter(
-            CalendarAdvanceInput.BUSINESS_CALENDAR, // name
+            AdvanceCalendarInput.BUSINESS_CALENDAR, // name
             "Business Calendar", // label
             List.class, // class
             RunnerParameter.Level.OPTIONAL, // level
             "List of business calendar slot. Default is Monday to Friday, 09:00 to 18:00");
     public static final RunnerParameter parameterBusinessTimeZone = new RunnerParameter(
-            CalendarAdvanceInput.BUSINESS_TIMEZONE, // name
+            AdvanceCalendarInput.BUSINESS_TIMEZONE, // name
             "Business TimeZone", // label
             String.class, // class
             RunnerParameter.Level.OPTIONAL, // level
             "The business Calendar can be attached to a timezone. Region Based and Fixed UTC offsets accepted. Visit https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")
             .setVisibleInTemplate();
     public static final RunnerParameter parameterUseHolidays = new RunnerParameter(
-            CalendarAdvanceInput.USE_HOLIDAYS, // name
+            AdvanceCalendarInput.USE_HOLIDAYS, // name
             "Use holidays", // label
             Boolean.class, // class
             RunnerParameter.Level.REQUIRED, // level
             "Holidays on country is used and considered as closed");
     public static final RunnerParameter parameterHolidayCountries = new RunnerParameter(
-            CalendarAdvanceInput.HOLIDAYS_COUNTRIES, // name
+            AdvanceCalendarInput.HOLIDAYS_COUNTRIES, // name
             "Holiday countries", // label
             List.class, // class
             RunnerParameter.Level.REQUIRED, // level
             "List of countries (\"FR\", \"US\"). List of available countrycodes <a href=\\\"https://date.nager.at/Country\\\" target=\\\"_blank\\\">here</a> ")
-            .addCondition(CalendarAdvanceInput.USE_HOLIDAYS, List.of("true"));
+            .addCondition(AdvanceCalendarInput.USE_HOLIDAYS, List.of("true"));
     public static final RunnerParameter parameterHolidayCalendarPolicy = new RunnerParameter(
-            CalendarAdvanceInput.HOLIDAY_CALENDAR_POLICY, // name
+            AdvanceCalendarInput.HOLIDAY_CALENDAR_POLICY, // name
             "Holiday calendar policy", // label
             String.class, // class
             RunnerParameter.Level.REQUIRED, // level
             "If ALL (default), the day must be in ALL calendar to be off. If ONEOF, one calendar having a vacation is enough to consider the day off")
-            .addChoice(CalendarAdvanceInput.HOLIDAY_CALENDAR_POLICY_V_ALL, "All")
-            .addChoice(CalendarAdvanceInput.HOLIDAY_CALENDAR_POLICY_V_ONEOF, "One Of")
-            .setDefaultValue(CalendarAdvanceInput.HOLIDAY_CALENDAR_POLICY_V_ALL)
-            .addCondition(CalendarAdvanceInput.USE_HOLIDAYS, List.of("true"));
+            .addChoice(AdvanceCalendarInput.HOLIDAY_CALENDAR_POLICY_V_ALL, "All")
+            .addChoice(AdvanceCalendarInput.HOLIDAY_CALENDAR_POLICY_V_ONEOF, "One Of")
+            .setDefaultValue(AdvanceCalendarInput.HOLIDAY_CALENDAR_POLICY_V_ALL)
+            .addCondition(AdvanceCalendarInput.USE_HOLIDAYS, List.of("true"));
     public static final RunnerParameter parameterDayProgression = new RunnerParameter(
-            CalendarAdvanceInput.DAY_PROGRESSION, // name
+            AdvanceCalendarInput.DAY_PROGRESSION, // name
             "Days progression", // label
             String.class, // class
             RunnerParameter.Level.REQUIRED, // level
             "Method to advance one day: business day (only open day in business calendar are used) or calendar day")
-            .addChoice(CalendarAdvanceInput.DAY_PROGRESSION_V_BUSINESSDAY, "Business day")
-            .addChoice(CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY, "Calendar day");
+            .addChoice(AdvanceCalendarInput.DAY_PROGRESSION_V_BUSINESSDAY, "Business day")
+            .addChoice(AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY, "Calendar day");
     public static final RunnerParameter parameterTargetProgression = new RunnerParameter(
-            CalendarAdvanceInput.TARGET_PROGRESSION, // name
+            AdvanceCalendarInput.TARGET_PROGRESSION, // name
             "Target progression", // label
             String.class, // class
             RunnerParameter.Level.REQUIRED, // level
             "The target day policy: Result (even if the day is not a business day), After (advance until a open day is found - in reverse, move backward), Before (first business day before the target day).")
-            .addChoice(CalendarAdvanceInput.TARGET_PROGRESSION_RESULT, "Result day")
-            .addChoice(CalendarAdvanceInput.TARGET_PROGRESSION_AFTER, "After")
-            .addChoice(CalendarAdvanceInput.TARGET_PROGRESSION_BEFORE, "Before");
+            .addChoice(AdvanceCalendarInput.TARGET_PROGRESSION_RESULT, "Result day")
+            .addChoice(AdvanceCalendarInput.TARGET_PROGRESSION_AFTER, "After")
+            .addChoice(AdvanceCalendarInput.TARGET_PROGRESSION_BEFORE, "Before");
     public static final RunnerParameter parameterErrorWhenNoDateFound = new RunnerParameter(
-            CalendarAdvanceInput.ERROR_WHEN_NO_DATE_FOUND, // name
+            AdvanceCalendarInput.ERROR_WHEN_NO_DATE_FOUND, // name
             "Error when no date found", // label
             Boolean.class, // class
             RunnerParameter.Level.OPTIONAL, // level
             "If no date are found for one duration, then throw an error NO_DATE_FOUND")
             .setVisibleInTemplate();
-    private final Logger logger = LoggerFactory.getLogger(CalendarAdvanceInput.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(AdvanceCalendarInput.class.getName());
     public String calendarAdvanceFunction;
     public boolean useBusinessDays;
     public List<String> businessCalendar;

@@ -1,14 +1,14 @@
-package org.camunda.connector.calendaradvance.advancehour;
+package org.camunda.connector.advancecalendar.advancehour;
 
 import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.cherrytemplate.RunnerParameter;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.CalendarAdvanceOutput;
-import org.camunda.connector.calendaradvance.timemachine.SlotContainer;
-import org.camunda.connector.calendaradvance.toolbox.CalendarAdvanceError;
-import org.camunda.connector.calendaradvance.toolbox.SubFunction;
-import org.camunda.connector.calendaradvance.toolbox.ValidateInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarOutput;
+import org.camunda.connector.advancecalendar.timemachine.SlotContainer;
+import org.camunda.connector.advancecalendar.toolbox.CalendarAdvanceError;
+import org.camunda.connector.advancecalendar.toolbox.SubFunction;
+import org.camunda.connector.advancecalendar.toolbox.ValidateInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class HourFunction implements SubFunction {
      * @throws ConnectorException in case of any error
      */
     @Override
-    public CalendarAdvanceOutput executeSubFunction(CalendarAdvanceInput calendarInput, OutboundConnectorContext outboundConnectorContext) throws ConnectorException {
+    public AdvanceCalendarOutput executeSubFunction(AdvanceCalendarInput calendarInput, OutboundConnectorContext outboundConnectorContext) throws ConnectorException {
         logger.debug("HourFunction Start");
         try {
             // First, calculate the date according all parameters
@@ -45,7 +45,7 @@ public class HourFunction implements SubFunction {
             ValidateInput.validateInput(calendarInput, true);
 
             // Now start the calculation
-            CalendarAdvanceOutput calendarOutput = new CalendarAdvanceOutput(calendarInput.isDurationAMap());
+            AdvanceCalendarOutput calendarOutput = new AdvanceCalendarOutput(calendarInput.isDurationAMap());
 
             SlotContainer slotContainer = new SlotContainer();
             slotContainer.setSlots(calendarInput.getBusinessCalendar());
@@ -156,7 +156,7 @@ public class HourFunction implements SubFunction {
             // Throuw an error if one result is not found
             if (calendarInput.isErrorWhenNoDateFound()) {
                 for (String position : calendarInput.getPositionDurations()) {
-                    CalendarAdvanceOutput.Result result = calendarOutput.getListResultDate(position);
+                    AdvanceCalendarOutput.Result result = calendarOutput.getListResultDate(position);
                     if (!result.foundDate)
                         throw new ConnectorException(CalendarAdvanceError.ERROR_NO_DATE_FOUND, "No date found for [" + position + "]");
                 }
@@ -192,27 +192,27 @@ public class HourFunction implements SubFunction {
     @Override
     public List<RunnerParameter> getInputsParameter() {
         return Arrays.asList(
-                CalendarAdvanceInput.parameterStartDay,
-                CalendarAdvanceInput.parameterDuration,
-                CalendarAdvanceInput.parameterDurations,
-                CalendarAdvanceInput.parameterDirection,
-                CalendarAdvanceInput.parameterBusinessCalendar,
-                CalendarAdvanceInput.parameterBusinessTimeZone,
-                CalendarAdvanceInput.parameterUseHolidays,
-                CalendarAdvanceInput.parameterHolidayCountries,
-                CalendarAdvanceInput.parameterHolidayCalendarPolicy,
-                CalendarAdvanceInput.parameterErrorWhenNoDateFound
+                AdvanceCalendarInput.parameterStartDay,
+                AdvanceCalendarInput.parameterDuration,
+                AdvanceCalendarInput.parameterDurations,
+                AdvanceCalendarInput.parameterDirection,
+                AdvanceCalendarInput.parameterBusinessCalendar,
+                AdvanceCalendarInput.parameterBusinessTimeZone,
+                AdvanceCalendarInput.parameterUseHolidays,
+                AdvanceCalendarInput.parameterHolidayCountries,
+                AdvanceCalendarInput.parameterHolidayCalendarPolicy,
+                AdvanceCalendarInput.parameterErrorWhenNoDateFound
 
         );
     }
 
     @Override
     public List<RunnerParameter> getOutputsParameter() {
-        return List.of(CalendarAdvanceOutput.parameterFoundDate,
-                CalendarAdvanceOutput.parameterResultDate,
-                CalendarAdvanceOutput.parameterResultZonedDate,
-                CalendarAdvanceOutput.parameterListPeriods,
-                CalendarAdvanceOutput.parameterListResultDates);
+        return List.of(AdvanceCalendarOutput.parameterFoundDate,
+                AdvanceCalendarOutput.parameterResultDate,
+                AdvanceCalendarOutput.parameterResultZonedDate,
+                AdvanceCalendarOutput.parameterListPeriods,
+                AdvanceCalendarOutput.parameterListResultDates);
     }
 
     @Override

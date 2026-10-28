@@ -1,10 +1,10 @@
 package org.camunda.advancecalendar.junit;
 
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.CalendarAdvanceOutput;
-import org.camunda.connector.calendaradvance.advanceday.DayFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarOutput;
+import org.camunda.connector.advancecalendar.advanceday.DayFunction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -29,35 +29,35 @@ public class TestMultipleDate {
 
     @Test
     public void multipleListDates() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = DayFunction.ADVANCE_DAYS;
         calendarInput.startDate = "2026-07-15";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_BACKWARD;
-        calendarInput.dayProgression = CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY;
-        calendarInput.targetProgression = CalendarAdvanceInput.TARGET_PROGRESSION_AFTER;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_BACKWARD;
+        calendarInput.dayProgression = AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY;
+        calendarInput.targetProgression = AdvanceCalendarInput.TARGET_PROGRESSION_AFTER;
         calendarInput.durations = List.of("P2D","P3D") ;
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assertEquals(Boolean.FALSE, calendarAdvanceOutput.isResultIsAMap());
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assertEquals(Boolean.FALSE, advanceCalendarOutput.isResultIsAMap());
 
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 2);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 2);
 
-            CalendarAdvanceOutput.Result result = calendarAdvanceOutput.getListResultDate("0");
+            AdvanceCalendarOutput.Result result = advanceCalendarOutput.getListResultDate("0");
                 logger.info("testBackCalendarDayOpen Result FoundDate:{} resultDate[{}] resultZonedDate[{}]", result.foundDate, result.resultDate.toLocalDate(), result.resultZonedDate);
                 assertTrue(result.foundDate);
                 assert (result.resultDate.toLocalDate().equals(LocalDate.of(2026, 7, 13)));
                 assertNull(result.resultZonedDate);
 
-             result = calendarAdvanceOutput.getListResultDate("1");
+             result = advanceCalendarOutput.getListResultDate("1");
             logger.info("testBackCalendarDayClosedAfterPolicy Result FoundDate:{} resultDate[{}] resultZonedDate[{}]",
                     result.foundDate,
                     result.resultDate.toLocalDate(),
@@ -76,34 +76,34 @@ public class TestMultipleDate {
     }
     @Test
     public void multipleMapDates() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = DayFunction.ADVANCE_DAYS;
         calendarInput.startDate = "2026-07-15";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_BACKWARD;
-        calendarInput.dayProgression = CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY;
-        calendarInput.targetProgression = CalendarAdvanceInput.TARGET_PROGRESSION_AFTER;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_BACKWARD;
+        calendarInput.dayProgression = AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY;
+        calendarInput.targetProgression = AdvanceCalendarInput.TARGET_PROGRESSION_AFTER;
         calendarInput.durations = Map.of("2Days", "P2D","3Days", "P3D") ;
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assertEquals(Boolean.TRUE, calendarAdvanceOutput.isResultIsAMap());
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assertEquals(Boolean.TRUE, advanceCalendarOutput.isResultIsAMap());
 
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 2);
-            CalendarAdvanceOutput.Result result = calendarAdvanceOutput.getListResultDate("2Days");
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 2);
+            AdvanceCalendarOutput.Result result = advanceCalendarOutput.getListResultDate("2Days");
             logger.info("testBackCalendarDayOpen Result FoundDate:{} resultDate[{}] resultZonedDate[{}]", result.foundDate, result.resultDate.toLocalDate(), result.resultZonedDate);
             assertTrue(result.foundDate);
             assert (result.resultDate.toLocalDate().equals(LocalDate.of(2026, 7, 13)));
             assertNull(result.resultZonedDate);
 
-            result = calendarAdvanceOutput.getListResultDate("3Days");
+            result = advanceCalendarOutput.getListResultDate("3Days");
             logger.info("testBackCalendarDayClosedAfterPolicy Result FoundDate:{} resultDate[{}] resultZonedDate[{}]",
                     result.foundDate,
                     result.resultDate.toLocalDate(),

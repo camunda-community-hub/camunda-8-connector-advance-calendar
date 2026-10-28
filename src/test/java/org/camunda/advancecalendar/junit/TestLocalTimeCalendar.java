@@ -2,11 +2,11 @@ package org.camunda.advancecalendar.junit;
 
 
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.CalendarAdvanceOutput;
-import org.camunda.connector.calendaradvance.advancehour.HourFunction;
-import org.camunda.connector.calendaradvance.timemachine.SlotContainer;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarOutput;
+import org.camunda.connector.advancecalendar.advancehour.HourFunction;
+import org.camunda.connector.advancecalendar.timemachine.SlotContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -33,30 +33,30 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testHourForwardHoliday() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-01-16T15:34:00";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT6H";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("US");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
             // Duration: 360 mn
             // Friday 16: 2:26 = 146
             // Monday 19 : holiday in the US
             // Tuesday 20:  360-146=214 mn => 09:00+214mn (3h34) =12:34
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}]", result.foundDate, result.resultDate, result.resultZonedDate);
                 assertTrue(result.foundDate);
                 assertEquals(LocalDateTime.of(2026, 1, 20, 12, 34), result.resultDate);
@@ -71,26 +71,26 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testHourBackwardHoliday() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-07-15T10:34:00";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_BACKWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_BACKWARD;
         calendarInput.duration = "PT12H10M";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}]", result.foundDate, result.resultDate, result.resultZonedDate);
                 // Duration: 730 mn
@@ -111,15 +111,15 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testHourMultipleSlots() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-03-26T11:50:00";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT18H20M";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("US");
@@ -130,12 +130,12 @@ public class TestLocalTimeCalendar {
                 "Thursday=09:00:00-12:00:00,14:10:00-18:00:00",
                 "Friday=09:00:00-12:00:00");
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -170,15 +170,15 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testHourMultipleSlotsReverse() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-03-31T15:48:00";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_BACKWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_BACKWARD;
         calendarInput.duration = "PT18H20M";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("US");
@@ -189,13 +189,13 @@ public class TestLocalTimeCalendar {
                 "Thursday=09:00:00-12:00:00,14:10:00-18:00:00",
                 "Friday=09:00:00-12:00:00");
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence( calendarAdvanceOutput );
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -231,26 +231,26 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testHourOverTwoHolidays() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-07-02T17:15:00";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT60H50M";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("US","FR");
-        calendarInput.holidayCalendarPolicy = CalendarAdvanceInput.HOLIDAY_CALENDAR_POLICY_V_ONEOF;
+        calendarInput.holidayCalendarPolicy = AdvanceCalendarInput.HOLIDAY_CALENDAR_POLICY_V_ONEOF;
         calendarInput.businessCalendar = null;
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -268,26 +268,26 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testNewYear() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-12-30T13:54";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT15H15M";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("US");
         calendarInput.businessCalendar = null;
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -308,26 +308,26 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void test247() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-09-11T13:54";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "P10D";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = List.of(SlotContainer.SLOT_24_7);
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -345,25 +345,25 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void test247Reverse() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-09-11T13:54";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_BACKWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_BACKWARD;
         calendarInput.duration = "P2D";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = List.of(SlotContainer.SLOT_24_7);
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -381,15 +381,15 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testSpecificDate() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-05-13T15:18";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT20H";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
@@ -401,13 +401,13 @@ public class TestLocalTimeCalendar {
                 SlotContainer.SPECIFIC_DAY_PREFIX+"2026/05/14=09:00-11:40", // Ascension day : it's a holiday in France, but we are open
                 SlotContainer.SPECIFIC_DAY_PREFIX+"2026/05/15=09:00-11:50"); // Day after Ascension
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -425,15 +425,15 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testAfterPeriodSpecificDate() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-05-14T15:18";
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT20H";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
@@ -447,13 +447,13 @@ public class TestLocalTimeCalendar {
 
 
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -471,15 +471,15 @@ public class TestLocalTimeCalendar {
 
     @Test
     public void testAftertwoPeriodsSpecificDate() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         calendarInput.startDate = "2026-05-14T13:18"; // start mid-second period
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT20H";
         calendarInput.useHolidays = true;
         calendarInput.holidaysCountries = List.of("FR");
@@ -492,13 +492,13 @@ public class TestLocalTimeCalendar {
                 SlotContainer.SPECIFIC_DAY_PREFIX+"2026/05/15=09:00-12:00"); // Day after Ascension
 
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            checkOneResultCoherence(calendarAdvanceOutput);
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            checkOneResultCoherence(advanceCalendarOutput);
 
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate, result.resultZonedDate,
                         result.listPeriods.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -514,10 +514,10 @@ public class TestLocalTimeCalendar {
         }
     }
 
-    private void checkOneResultCoherence( CalendarAdvanceOutput calendarAdvanceOutput ) {
-        assert(calendarAdvanceOutput.getNumberOfResultDate() == 1);
-        CalendarAdvanceOutput.Result firstPositionResult = calendarAdvanceOutput.getListResultDate("0");
-        CalendarAdvanceOutput.Result firstCollectionResult = calendarAdvanceOutput.getListResultDateCollection().iterator().next();
+    private void checkOneResultCoherence( AdvanceCalendarOutput advanceCalendarOutput) {
+        assert(advanceCalendarOutput.getNumberOfResultDate() == 1);
+        AdvanceCalendarOutput.Result firstPositionResult = advanceCalendarOutput.getListResultDate("0");
+        AdvanceCalendarOutput.Result firstCollectionResult = advanceCalendarOutput.getListResultDateCollection().iterator().next();
         assertEquals( firstCollectionResult.foundDate,firstCollectionResult.foundDate);
         assertEquals( firstCollectionResult.resultDate,firstCollectionResult.resultDate);
         assertEquals( firstCollectionResult.resultZonedDate,firstCollectionResult.resultZonedDate);

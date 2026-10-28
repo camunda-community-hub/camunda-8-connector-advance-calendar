@@ -1,14 +1,14 @@
-package org.camunda.connector.calendaradvance.advanceday;
+package org.camunda.connector.advancecalendar.advanceday;
 
 import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.cherrytemplate.RunnerParameter;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.CalendarAdvanceOutput;
-import org.camunda.connector.calendaradvance.timemachine.SlotContainer;
-import org.camunda.connector.calendaradvance.toolbox.CalendarAdvanceError;
-import org.camunda.connector.calendaradvance.toolbox.SubFunction;
-import org.camunda.connector.calendaradvance.toolbox.ValidateInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarOutput;
+import org.camunda.connector.advancecalendar.timemachine.SlotContainer;
+import org.camunda.connector.advancecalendar.toolbox.CalendarAdvanceError;
+import org.camunda.connector.advancecalendar.toolbox.SubFunction;
+import org.camunda.connector.advancecalendar.toolbox.ValidateInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class DayFunction implements SubFunction {
      * @throws ConnectorException in case of any error
      */
     @Override
-    public CalendarAdvanceOutput executeSubFunction(CalendarAdvanceInput calendarInput, OutboundConnectorContext outboundConnectorContext) throws ConnectorException {
+    public AdvanceCalendarOutput executeSubFunction(AdvanceCalendarInput calendarInput, OutboundConnectorContext outboundConnectorContext) throws ConnectorException {
         logger.debug("DayFunction Start");
         try {
 
@@ -44,7 +44,7 @@ public class DayFunction implements SubFunction {
             ValidateInput.validateInput(calendarInput, true);
 
             // Now start the calculation
-            CalendarAdvanceOutput calendarOutput = new CalendarAdvanceOutput(calendarInput.isDurationAMap());
+            AdvanceCalendarOutput calendarOutput = new AdvanceCalendarOutput(calendarInput.isDurationAMap());
 
             SlotContainer slotContainer = new SlotContainer();
             slotContainer.setSlots(calendarInput.getBusinessCalendar());
@@ -54,27 +54,27 @@ public class DayFunction implements SubFunction {
 
             for (String position : calendarInput.getPositionDurations()) {
                 // If the period is Month or Year, then we must move the Advance Calenday By BusinessDay
-                CalendarAdvanceInput.TYPEPERIOD type = calendarInput.getTypePeriod(position);
-                boolean isMonthYearPeriod = CalendarAdvanceInput.TYPEPERIOD.YEAR.equals(type)
-                        || CalendarAdvanceInput.TYPEPERIOD.MONTH.equals(type);
-                if (isMonthYearPeriod && CalendarAdvanceInput.DAY_PROGRESSION_V_BUSINESSDAY.equals(calendarInput.getDayProgression())) {
+                AdvanceCalendarInput.TYPEPERIOD type = calendarInput.getTypePeriod(position);
+                boolean isMonthYearPeriod = AdvanceCalendarInput.TYPEPERIOD.YEAR.equals(type)
+                        || AdvanceCalendarInput.TYPEPERIOD.MONTH.equals(type);
+                if (isMonthYearPeriod && AdvanceCalendarInput.DAY_PROGRESSION_V_BUSINESSDAY.equals(calendarInput.getDayProgression())) {
 
                     logger.error("DayFunction: inappropriate period [{}] from duration[{}]: in BUSINESSDAY progression only days are accepted", type, calendarInput.getInputDuration(position));
                     throw new ConnectorException(CalendarAdvanceError.ERROR_INAPPROPRIATE_DURATION, "Period [" + type + " ] for BUSINESSDAY progression");
                 }
-                if (CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY.equals(calendarInput.getDayProgression())
+                if (AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY.equals(calendarInput.getDayProgression())
                         || isMonthYearPeriod) {
                     advanceDayResult = advanceCalendarByDay(calendarInput, position);
-                } else if (CalendarAdvanceInput.DAY_PROGRESSION_V_BUSINESSDAY.equals(calendarInput.getDayProgression())) {
+                } else if (AdvanceCalendarInput.DAY_PROGRESSION_V_BUSINESSDAY.equals(calendarInput.getDayProgression())) {
                     advanceDayResult = advanceCalendarByBusinessDay(calendarInput, position);
                 } else {
                     logger.error("Unknown progression [{}] Expect [{},{}]",
                             calendarInput.getDayProgression(),
-                            CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY,
-                            CalendarAdvanceInput.DAY_PROGRESSION_V_BUSINESSDAY);
+                            AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY,
+                            AdvanceCalendarInput.DAY_PROGRESSION_V_BUSINESSDAY);
                     throw new ConnectorException(CalendarAdvanceError.ERROR_DURING_OPERATION, "Unknown progression [" + calendarInput.getDayProgression()
-                            + "] Expect [" + CalendarAdvanceInput.DAY_PROGRESSION_V_CALENDARDAY
-                            + "," + CalendarAdvanceInput.DAY_PROGRESSION_V_BUSINESSDAY + "]");
+                            + "] Expect [" + AdvanceCalendarInput.DAY_PROGRESSION_V_CALENDARDAY
+                            + "," + AdvanceCalendarInput.DAY_PROGRESSION_V_BUSINESSDAY + "]");
                 }
                 if (!advanceDayResult.foundDate) {
                     // This is the end here!
@@ -88,7 +88,7 @@ public class DayFunction implements SubFunction {
                 LocalDateTime resultDate = advanceDayResult.resultLocalDate.atStartOfDay();
                 // Check the target Policy - we need to do that only if the progression is not BUSINESSDAY, because with BUSINESS DAY, of course the current date is open by construction before...
                 // Except if isMonthYearPeriod ! In that circunstance, we advance by days and we need maybe to adjust
-                if (!CalendarAdvanceInput.DAY_PROGRESSION_V_BUSINESSDAY.equals(calendarInput.getDayProgression())
+                if (!AdvanceCalendarInput.DAY_PROGRESSION_V_BUSINESSDAY.equals(calendarInput.getDayProgression())
                         || isMonthYearPeriod) {
                     AdvanceDayResult advanceResultAdjust = adjustTarget(calendarInput, advanceDayResult.resultLocalDate);
                     if (!advanceResultAdjust.foundDate) {
@@ -123,26 +123,26 @@ public class DayFunction implements SubFunction {
     @Override
     public List<RunnerParameter> getInputsParameter() {
         return Arrays.asList(
-                CalendarAdvanceInput.parameterStartDay,
-                CalendarAdvanceInput.parameterDuration,
-                CalendarAdvanceInput.parameterDurations,
-                CalendarAdvanceInput.parameterDirection,
-                CalendarAdvanceInput.parameterBusinessCalendar,
-                CalendarAdvanceInput.parameterUseHolidays,
-                CalendarAdvanceInput.parameterHolidayCountries,
-                CalendarAdvanceInput.parameterHolidayCalendarPolicy,
-                CalendarAdvanceInput.parameterDayProgression,
-                CalendarAdvanceInput.parameterTargetProgression,
-                CalendarAdvanceInput.parameterErrorWhenNoDateFound
+                AdvanceCalendarInput.parameterStartDay,
+                AdvanceCalendarInput.parameterDuration,
+                AdvanceCalendarInput.parameterDurations,
+                AdvanceCalendarInput.parameterDirection,
+                AdvanceCalendarInput.parameterBusinessCalendar,
+                AdvanceCalendarInput.parameterUseHolidays,
+                AdvanceCalendarInput.parameterHolidayCountries,
+                AdvanceCalendarInput.parameterHolidayCalendarPolicy,
+                AdvanceCalendarInput.parameterDayProgression,
+                AdvanceCalendarInput.parameterTargetProgression,
+                AdvanceCalendarInput.parameterErrorWhenNoDateFound
         );
     }
 
     @Override
     public List<RunnerParameter> getOutputsParameter() {
-        return List.of(CalendarAdvanceOutput.parameterFoundDate,
-                CalendarAdvanceOutput.parameterResultDate,
-                CalendarAdvanceOutput.parameterListPeriods,
-                CalendarAdvanceOutput.parameterListResultDates
+        return List.of(AdvanceCalendarOutput.parameterFoundDate,
+                AdvanceCalendarOutput.parameterResultDate,
+                AdvanceCalendarOutput.parameterListPeriods,
+                AdvanceCalendarOutput.parameterListResultDates
         );
     }
 
@@ -184,21 +184,21 @@ public class DayFunction implements SubFunction {
      * @return the advanceResult, which contains the period and the result
      * @throws ConnectorException for any error
      */
-    private AdvanceDayResult advanceCalendarByDay(CalendarAdvanceInput calendarInput, String position) throws ConnectorException {
+    private AdvanceDayResult advanceCalendarByDay(AdvanceCalendarInput calendarInput, String position) throws ConnectorException {
         LocalDate cursor = calendarInput.getReferenceDateLocalDate();
-        CalendarAdvanceInput.TYPEPERIOD type = calendarInput.getTypePeriod(position);
+        AdvanceCalendarInput.TYPEPERIOD type = calendarInput.getTypePeriod(position);
 
         LocalDate endDate;
         String durationLog = "";
-        if (type == CalendarAdvanceInput.TYPEPERIOD.DAY || type == CalendarAdvanceInput.TYPEPERIOD.TIME) {
+        if (type == AdvanceCalendarInput.TYPEPERIOD.DAY || type == AdvanceCalendarInput.TYPEPERIOD.TIME) {
             endDate = cursor.plusDays((calendarInput.isDirectionForward() ? 1 : -1) * calendarInput.getDurationInDays(position));
             durationLog = (calendarInput.isDirectionForward() ? 1 : -1) * calendarInput.getDurationInDays(position) + " days";
-        } else if (type == CalendarAdvanceInput.TYPEPERIOD.MONTH) {
+        } else if (type == AdvanceCalendarInput.TYPEPERIOD.MONTH) {
             Period period = calendarInput.getPeriod(position);
             endDate = cursor.plusMonths((calendarInput.isDirectionForward() ? 1 : -1) * period.getMonths())
                     .plusDays((calendarInput.isDirectionForward() ? 1 : -1) * period.getDays());
             durationLog = (calendarInput.isDirectionForward() ? 1 : -1) * period.getMonths() + " months";
-        } else if (type == CalendarAdvanceInput.TYPEPERIOD.YEAR) {
+        } else if (type == AdvanceCalendarInput.TYPEPERIOD.YEAR) {
             Period period = calendarInput.getPeriod(position);
             int factor = calendarInput.isDirectionForward() ? 1 : -1;
             endDate = cursor.plusYears(factor * period.getYears())
@@ -246,7 +246,7 @@ public class DayFunction implements SubFunction {
      * @return the advanceResult, which contains the period and the result
      * @throws ConnectorException in case of error
      */
-    private AdvanceDayResult advanceCalendarByBusinessDay(CalendarAdvanceInput calendarInput, String position) throws
+    private AdvanceDayResult advanceCalendarByBusinessDay(AdvanceCalendarInput calendarInput, String position) throws
             ConnectorException {
 
         AdvanceDayResult dayResult = new AdvanceDayResult();
@@ -300,15 +300,15 @@ public class DayFunction implements SubFunction {
     /**
      * AdjustTarget : the calculated day may be an holiday, so we need to adjust this date according the policy
      */
-    private AdvanceDayResult adjustTarget(CalendarAdvanceInput calendarInput, LocalDate cursor) {
+    private AdvanceDayResult adjustTarget(AdvanceCalendarInput calendarInput, LocalDate cursor) {
         AdvanceDayResult dayResult = new AdvanceDayResult();
-        if (CalendarAdvanceInput.TARGET_PROGRESSION_RESULT.equals(calendarInput.getTargetProgression())) {
+        if (AdvanceCalendarInput.TARGET_PROGRESSION_RESULT.equals(calendarInput.getTargetProgression())) {
             dayResult.foundDate = true;
             dayResult.resultLocalDate = cursor;
             return dayResult;
         }
         int direction =
-                (CalendarAdvanceInput.TARGET_PROGRESSION_BEFORE.equals(calendarInput.getTargetProgression()) ? -1 : 1);
+                (AdvanceCalendarInput.TARGET_PROGRESSION_BEFORE.equals(calendarInput.getTargetProgression()) ? -1 : 1);
 
         SlotContainer slotContainer = new SlotContainer();
         slotContainer.setSlots(calendarInput.getBusinessCalendar());

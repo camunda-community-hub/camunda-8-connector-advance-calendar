@@ -1,10 +1,10 @@
-package org.camunda.connector.calendaradvance.timemachine;
+package org.camunda.connector.advancecalendar.timemachine;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.connector.api.error.ConnectorException;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.toolbox.CalendarAdvanceError;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.toolbox.CalendarAdvanceError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ public class HolidayContainer {
      * @param policy        OR: a holiday in any calendar is enough. AND: the day must be a holiday in every calendar
      * @return true if the day is a holiday
      */
-    public boolean isHoliday(LocalDate date, List<String> countriesCode, CalendarAdvanceInput.CalendarPolicy policy) {
+    public boolean isHoliday(LocalDate date, List<String> countriesCode, AdvanceCalendarInput.CalendarPolicy policy) {
         String analysis = "";
         boolean oneHoliday = false;
         boolean allHoliday = true;
@@ -85,13 +85,13 @@ public class HolidayContainer {
 
 
             switch (policy) {
-                case CalendarAdvanceInput.CalendarPolicy.ALL:
+                case AdvanceCalendarInput.CalendarPolicy.ALL:
                     if (allHoliday) {
                         analysis += "==> Holiday";
                         return true;
                     }
                     return false;
-                case CalendarAdvanceInput.CalendarPolicy.ONEOF:
+                case AdvanceCalendarInput.CalendarPolicy.ONEOF:
                     if (oneHoliday) {
                         analysis += "==> Holiday";
                         return true;

@@ -1,4 +1,4 @@
-package org.camunda.connector.calendaradvance.toolbox;
+package org.camunda.connector.advancecalendar.toolbox;
 
 public class CalendarAdvanceError {
 

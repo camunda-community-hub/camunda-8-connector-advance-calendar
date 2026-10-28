@@ -1,16 +1,16 @@
-package org.camunda.connector.calendaradvance;
+package org.camunda.connector.advancecalendar;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.camunda.connector.cherrytemplate.CherryOutput;
 import io.camunda.connector.cherrytemplate.RunnerParameter;
-import org.camunda.connector.calendaradvance.timemachine.SlotContainer;
-import org.camunda.connector.calendaradvance.toolbox.ParameterToolbox;
+import org.camunda.connector.advancecalendar.timemachine.SlotContainer;
+import org.camunda.connector.advancecalendar.toolbox.ParameterToolbox;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class CalendarAdvanceOutput implements CherryOutput {
+public class AdvanceCalendarOutput implements CherryOutput {
 
     public static final String OUTPUT_FOUNDDATE = "foundDate";
     public static final String OUTPUT_RESULTDATE = "resultDate";
@@ -46,12 +46,12 @@ public class CalendarAdvanceOutput implements CherryOutput {
     private ZonedDateTime resultZonedDate;
     private List<SlotContainer.Period> listPeriods = new ArrayList<>();
 
-    public CalendarAdvanceOutput() {
+    public AdvanceCalendarOutput() {
         listResultDates = new ArrayList<>();
     }
 
 
-    public CalendarAdvanceOutput(boolean resultIsAMap) {
+    public AdvanceCalendarOutput(boolean resultIsAMap) {
         if (resultIsAMap)
             listResultDates = new HashMap<>();
         else

@@ -1,11 +1,11 @@
 package org.camunda.advancecalendar.junit;
 
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
-import org.camunda.connector.calendaradvance.CalendarAdvanceFunction;
-import org.camunda.connector.calendaradvance.CalendarAdvanceInput;
-import org.camunda.connector.calendaradvance.CalendarAdvanceOutput;
-import org.camunda.connector.calendaradvance.advancehour.HourFunction;
-import org.camunda.connector.calendaradvance.timemachine.SlotContainer;
+import org.camunda.connector.advancecalendar.AdvanceCalendarFunction;
+import org.camunda.connector.advancecalendar.AdvanceCalendarInput;
+import org.camunda.connector.advancecalendar.AdvanceCalendarOutput;
+import org.camunda.connector.advancecalendar.advancehour.HourFunction;
+import org.camunda.connector.advancecalendar.timemachine.SlotContainer;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,24 +31,24 @@ public class TestZonedTimeCalendar {
 
     @Test
     public void testNowPlus50Minutes() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT")).truncatedTo(ChronoUnit.MINUTES);
         calendarInput.startDate = now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT50M";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = List.of("24/7"); // only way to calculate the result
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("Result FoundDate:{} resultDate[{}] sourceZoneDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate,
                         calendarInput.startDate,
@@ -63,8 +63,8 @@ public class TestZonedTimeCalendar {
                 assert (result.resultZonedDate.toInstant().toEpochMilli() == nowPlus50Zoned.toInstant().toEpochMilli());
                 assert (result.resultDate.equals(nowPlus50Local));
 
-                assert (calendarAdvanceOutput.getResultZonedDate().toInstant().toEpochMilli() == nowPlus50Zoned.toInstant().toEpochMilli());
-                assert (calendarAdvanceOutput.getResultDate().equals(nowPlus50Local));
+                assert (advanceCalendarOutput.getResultZonedDate().toInstant().toEpochMilli() == nowPlus50Zoned.toInstant().toEpochMilli());
+                assert (advanceCalendarOutput.getResultDate().equals(nowPlus50Local));
 
             }
 
@@ -77,24 +77,24 @@ public class TestZonedTimeCalendar {
 
     @Test
     public void testNowPlus3Days() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT")).truncatedTo(ChronoUnit.MINUTES);
         calendarInput.startDate = now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "P3D";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = SlotContainer.CALENDAR_24_7; // only way to calculate the result
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("nowPlus3dLocal: Result FoundDate:{} resultDate[{}] sourceZoneDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate,
                         calendarInput.startDate,
@@ -118,10 +118,10 @@ public class TestZonedTimeCalendar {
 
     @Test
     public void testNewYorkLosAngeles() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
@@ -131,17 +131,17 @@ public class TestZonedTimeCalendar {
                 ZoneId.of("America/New_York")
         );
         calendarInput.startDate = zdtNewYork.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT2H10M";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = SlotContainer.getWeekSlots(LocalTime.of(9,0), LocalTime.of(18,0));
         calendarInput.businessTimeZone = "America/Los_Angeles";
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("testNewYorkLosAngeles: Result FoundDate:{} resultDate[{}] sourceZoneDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate,
                         calendarInput.startDate,
@@ -170,10 +170,10 @@ public class TestZonedTimeCalendar {
 
     @Test
     public void testDenverNewYork() {
-        CalendarAdvanceInput calendarInput = new CalendarAdvanceInput();
+        AdvanceCalendarInput calendarInput = new AdvanceCalendarInput();
         OutboundConnectorContext context = mock(OutboundConnectorContext.class);
         // make bindVariables return your prepared input
-        when(context.bindVariables(CalendarAdvanceInput.class)).thenReturn(calendarInput);
+        when(context.bindVariables(AdvanceCalendarInput.class)).thenReturn(calendarInput);
 
         // populate your input
         calendarInput.calendarAdvanceFunction = HourFunction.ADVANCE_HOURS;
@@ -183,17 +183,17 @@ public class TestZonedTimeCalendar {
                 ZoneId.of("America/Denver")
         );
         calendarInput.startDate = zdtDenver.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        calendarInput.direction = CalendarAdvanceInput.DIRECTION_V_FORWARD;
+        calendarInput.direction = AdvanceCalendarInput.DIRECTION_V_FORWARD;
         calendarInput.duration = "PT2H10M";
         calendarInput.useHolidays = false;
         calendarInput.businessCalendar = SlotContainer.getWeekSlots(LocalTime.of(9,0), LocalTime.of(18,0));
         calendarInput.businessTimeZone = "America/New_York";
 
-        CalendarAdvanceFunction calendarFunction = new CalendarAdvanceFunction();
+        AdvanceCalendarFunction calendarFunction = new AdvanceCalendarFunction();
         try {
-            CalendarAdvanceOutput calendarAdvanceOutput = calendarFunction.execute(context);
-            assert (calendarAdvanceOutput.getNumberOfResultDate() == 1);
-            for (CalendarAdvanceOutput.Result result : calendarAdvanceOutput.getListResultDateCollection()) {
+            AdvanceCalendarOutput advanceCalendarOutput = calendarFunction.execute(context);
+            assert (advanceCalendarOutput.getNumberOfResultDate() == 1);
+            for (AdvanceCalendarOutput.Result result : advanceCalendarOutput.getListResultDateCollection()) {
 
                 logger.info("testDenverNewYork: Result FoundDate:{} resultDate[{}] sourceZoneDate[{}] resultZonedDate[{}] Periods[{}]", result.foundDate, result.resultDate,
                         calendarInput.startDate,
